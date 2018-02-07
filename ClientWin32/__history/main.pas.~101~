@@ -159,6 +159,8 @@ begin
   sgTimerVariants.ColWidths[1] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_1', 250);
   sgTimerVariants.Cells[2,0] := 'Time interval';
   sgTimerVariants.ColWidths[2] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 80);
+  sgTimerVariants.Cells[3,0] := 'Message to shown then done';
+  sgTimerVariants.ColWidths[3] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 350);
 
   j := AppOptions.ReadInteger('TimersList', 'Count', 0);
   if j = 0 then
@@ -183,17 +185,19 @@ end;
 
 procedure TForm2.miStartTimerClick(Sender: TObject);
 var
-  i: integer;
+  i, j: integer;
 begin
   tMainCook.Enabled := false;
   tMainCook.Interval := 1000;
   tMainCook.Enabled := true;
 
+  j := IntToStr(Copy(pmTrayMenu.Items[i].Name, 10, 10));
+
   i := Length(allTimers);
   SetLength(allTimers, i+1);
   allTimers[i].startTime := Now;
-//  allTimers[i].stopTime := dateutils.IncMinute(allTimers[i].startTime, StrToInt(eMainTimerValue.Text));
-//  allTimers[i].messagePopup := 'TeaTime started at '+DateTimeToStr(allTimers[i].startTime)+' for '+eMainTimerValue.Text+' mins is done';
+  allTimers[i].stopTime := dateutils.IncMinute(allTimers[i].startTime, StringToSeconds(sgTimerVariants.Cells[2, j]));
+  allTimers[i].messagePopup := sgTimerVariants.Cells[3, j];
   allTimers[i].enabled := true;
 end;
 
@@ -203,15 +207,19 @@ var
   i: integer;
 begin
   for i := pmTrayMenu.Items.Count-1 downto 0 do begin
-    if Copy(pmTrayMenu.Items[i].Name, 1, 9) = 'TimerItem' then
-      pmTrayMenu.Items.Delete(i);
+    if Copy(pmTrayMenu.Items[i].Name, 1, 9) = 'TimerItem' then begin
+      pmTrayMenu.Items[i].Free;
+//      pmTrayMenu.Items.Delete(i);
+    end;
   end;
 
 
-  for i := 0 to sgTimerVariants.RowCount-1 do begin
+  for i := sgTimerVariants.RowCount-1 downto 1 do begin
     mi := TMenuItem.Create(self);
-    mi.Caption := 'asdfasdf';
+    mi.Caption := sgTimerVariants.Cells[1, i];
     mi.Name := 'TimerItem'+IntToStr(i);
+    mi.OnClick := miStartTimerClick;
+
     pmTrayMenu.Items.Insert(0, mi);
   end;
 end;

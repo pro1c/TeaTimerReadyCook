@@ -159,6 +159,8 @@ begin
   sgTimerVariants.ColWidths[1] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_1', 250);
   sgTimerVariants.Cells[2,0] := 'Time interval';
   sgTimerVariants.ColWidths[2] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 80);
+  sgTimerVariants.Cells[3,0] := 'Message to shown then done';
+  sgTimerVariants.ColWidths[3] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 350);
 
   j := AppOptions.ReadInteger('TimersList', 'Count', 0);
   if j = 0 then
@@ -205,14 +207,14 @@ begin
   for i := pmTrayMenu.Items.Count-1 downto 0 do begin
     if Copy(pmTrayMenu.Items[i].Name, 1, 9) = 'TimerItem' then begin
       pmTrayMenu.Items[i].Free;
-      pmTrayMenu.Items.Delete(i);
+//      pmTrayMenu.Items.Delete(i);
     end;
   end;
 
 
-  for i := 0 to sgTimerVariants.RowCount-1 do begin
+  for i := sgTimerVariants.RowCount-1 downto 1 do begin
     mi := TMenuItem.Create(self);
-    mi.Caption := 'asdfasdf';
+    mi.Caption := sgTimerVariants.Cells[1, i];
     mi.Name := 'TimerItem'+IntToStr(i);
     pmTrayMenu.Items.Insert(0, mi);
   end;

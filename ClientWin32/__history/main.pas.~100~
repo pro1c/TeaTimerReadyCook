@@ -160,7 +160,7 @@ begin
   sgTimerVariants.Cells[2,0] := 'Time interval';
   sgTimerVariants.ColWidths[2] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 80);
   sgTimerVariants.Cells[3,0] := 'Message to shown then done';
-  sgTimerVariants.ColWidths[3] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 280);
+  sgTimerVariants.ColWidths[3] := AppOptions.ReadInteger('TimerVariants', 'ColWidth_2', 350);
 
   j := AppOptions.ReadInteger('TimersList', 'Count', 0);
   if j = 0 then
@@ -216,6 +216,8 @@ begin
     mi := TMenuItem.Create(self);
     mi.Caption := sgTimerVariants.Cells[1, i];
     mi.Name := 'TimerItem'+IntToStr(i);
+    mi.OnClick := miStartTimerClick;
+
     pmTrayMenu.Items.Insert(0, mi);
   end;
 end;

@@ -12,7 +12,6 @@ type
     tiMainForm: TTrayIcon;
     pmTrayMenu: TPopupMenu;
     miExit: TMenuItem;
-    miStartTimer: TMenuItem;
     tMainCook: TTimer;
     sgTimers: TStringGrid;
     tGridRefresh: TTimer;
@@ -115,6 +114,7 @@ begin
   for i := 0 to sgTimerVariants.RowCount-1 do begin
     AppOptions.WriteString('TimersList', 'Timer_'+IntToStr(i)+'_Name', sgTimerVariants.Cells[1,i+1]);
     AppOptions.WriteString('TimersList', 'Timer_'+IntToStr(i)+'_Interval', sgTimerVariants.Cells[2,i+1]);
+    AppOptions.WriteString('TimersList', 'Timer_'+IntToStr(i)+'_Message', sgTimerVariants.Cells[3,i+1]);
   end;
 end;
 
@@ -174,7 +174,11 @@ begin
     sgTimerVariants.Cells[1,i+1] := s;
     s := AppOptions.ReadString('TimersList', 'Timer_'+IntToStr(i)+'_Interval', '10s');
     sgTimerVariants.Cells[2,i+1] := s;
+    s := AppOptions.ReadString('TimersList', 'Timer_'+IntToStr(i)+'_Message', '');
+    sgTimerVariants.Cells[3,i+1] := s;
   end;
+
+  RefreshMenu;
 end;
 
 procedure TForm2.miExitClick(Sender: TObject);
@@ -185,17 +189,21 @@ end;
 
 procedure TForm2.miStartTimerClick(Sender: TObject);
 var
-  i: integer;
+  i, j: integer;
+  s: string;
 begin
   tMainCook.Enabled := false;
   tMainCook.Interval := 1000;
   tMainCook.Enabled := true;
 
+  s := Copy((Sender as TMenuItem).Name, 10, 10);
+  j := StrToInt(s);
+
   i := Length(allTimers);
   SetLength(allTimers, i+1);
   allTimers[i].startTime := Now;
-//  allTimers[i].stopTime := dateutils.IncMinute(allTimers[i].startTime, StrToInt(eMainTimerValue.Text));
-//  allTimers[i].messagePopup := 'TeaTime started at '+DateTimeToStr(allTimers[i].startTime)+' for '+eMainTimerValue.Text+' mins is done';
+  allTimers[i].stopTime := dateutils.IncSecond(allTimers[i].startTime, StringToSeconds(sgTimerVariants.Cells[2, j]));
+  allTimers[i].messagePopup := sgTimerVariants.Cells[3, j];
   allTimers[i].enabled := true;
 end;
 
@@ -216,6 +224,8 @@ begin
     mi := TMenuItem.Create(self);
     mi.Caption := sgTimerVariants.Cells[1, i];
     mi.Name := 'TimerItem'+IntToStr(i);
+    mi.OnClick := miStartTimerClick;
+
     pmTrayMenu.Items.Insert(0, mi);
   end;
 end;

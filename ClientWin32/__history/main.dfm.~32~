@@ -2,7 +2,7 @@ object Form2: TForm2
   Left = 0
   Top = 0
   Caption = 'Form2'
-  ClientHeight = 528
+  ClientHeight = 530
   ClientWidth = 885
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,15 +13,17 @@ object Form2: TForm2
   Menu = mmMain
   OldCreateOrder = False
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object sgTimers: TStringGrid
     Left = 8
-    Top = 336
+    Top = 338
     Width = 869
     Height = 184
     FixedCols = 0
     RowCount = 2
+    Options = [goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect]
     TabOrder = 0
     ColWidths = (
       64
@@ -33,12 +35,25 @@ object Form2: TForm2
       24
       24)
   end
-  object StringGrid1: TStringGrid
+  object sgTimerVariants: TStringGrid
     Left = 8
     Top = 39
     Width = 869
     Height = 274
+    RowCount = 2
+    Options = [goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing]
     TabOrder = 1
+    OnSelectCell = sgTimerVariantsSelectCell
+    OnSetEditText = sgTimerVariantsSetEditText
+    ColWidths = (
+      64
+      64
+      64
+      64
+      64)
+    RowHeights = (
+      24
+      24)
   end
   object btnAddTimerVariant: TButton
     Left = 8
@@ -47,6 +62,35 @@ object Form2: TForm2
     Height = 25
     Caption = 'Add variant'
     TabOrder = 2
+    OnClick = btnAddTimerVariantClick
+  end
+  object cbPeriod: TComboBox
+    Left = 592
+    Top = 159
+    Width = 73
+    Height = 21
+    ItemIndex = 1
+    TabOrder = 3
+    Text = 'minutes'
+    Visible = False
+    OnChange = cbPeriodChange
+    OnExit = cbPeriodExit
+    Items.Strings = (
+      'seconds'
+      'minutes'
+      'hours'
+      'days'
+      'months'
+      'years')
+  end
+  object btnSave: TButton
+    Left = 802
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'Save'
+    TabOrder = 4
+    OnClick = btnSaveClick
   end
   object tiMainForm: TTrayIcon
     Icon.Data = {
@@ -7708,12 +7752,13 @@ object Form2: TForm2
       FFFFFFFFFFFFFFFFFFFFFFFFFF800000000000000007FFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFF8000000000000003FFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000003FFFFFFFFFFFFFFFFFF}
-    PopupMenu = pmMainMenu
+    PopupMenu = pmTrayMenu
     Visible = True
+    OnDblClick = tiMainFormDblClick
     Left = 592
     Top = 8
   end
-  object pmMainMenu: TPopupMenu
+  object pmTrayMenu: TPopupMenu
     Left = 304
     Top = 80
     object miStartTimer: TMenuItem

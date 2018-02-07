@@ -7761,11 +7761,6 @@ object Form2: TForm2
   object pmTrayMenu: TPopupMenu
     Left = 304
     Top = 80
-    object miStartTimer: TMenuItem
-      Caption = 'Start tea timer (normal time)'
-      Default = True
-      OnClick = miStartTimerClick
-    end
     object miExit: TMenuItem
       Caption = 'Exit'
       OnClick = miExitClick
