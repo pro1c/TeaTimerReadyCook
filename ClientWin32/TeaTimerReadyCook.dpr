@@ -2,7 +2,9 @@ program TeaTimerReadyCook;
 
 uses
   Vcl.Forms,
-  main in 'main.pas' {Form2};
+  main in 'main.pas' {Form2},
+  OptionsUtil in '..\..\RFQUtils\OptionsUtil.pas',
+  StrU_new in '..\..\RFQUtils\StrU_new.pas';
 
 {$R *.res}
 

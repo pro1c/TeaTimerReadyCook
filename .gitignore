@@ -1,3 +1,4 @@
 ﻿# delphi
 *.identcache
 *.local
+*.dcu
