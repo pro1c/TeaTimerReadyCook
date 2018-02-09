@@ -2,7 +2,7 @@ object Form2: TForm2
   Left = 0
   Top = 0
   Caption = 'Form2'
-  ClientHeight = 530
+  ClientHeight = 510
   ClientWidth = 885
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,9 +18,9 @@ object Form2: TForm2
   TextHeight = 13
   object sgTimers: TStringGrid
     Left = 8
-    Top = 338
+    Top = 319
     Width = 869
-    Height = 184
+    Height = 203
     FixedCols = 0
     RowCount = 2
     Options = [goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect]
@@ -91,6 +91,15 @@ object Form2: TForm2
     Caption = 'Save'
     TabOrder = 4
     OnClick = btnSaveClick
+  end
+  object Memo1: TMemo
+    Left = 472
+    Top = 208
+    Width = 361
+    Height = 241
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 5
   end
   object tiMainForm: TTrayIcon
     Icon.Data = {
@@ -7754,6 +7763,7 @@ object Form2: TForm2
       FFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000003FFFFFFFFFFFFFFFFFF}
     PopupMenu = pmTrayMenu
     Visible = True
+    OnBalloonClick = tiMainFormBalloonClick
     OnDblClick = tiMainFormDblClick
     Left = 592
     Top = 8

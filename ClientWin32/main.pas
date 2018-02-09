@@ -22,13 +22,13 @@ type
     btnAddTimerVariant: TButton;
     cbPeriod: TComboBox;
     btnSave: TButton;
+    Memo1: TMemo;
     procedure miExitClick(Sender: TObject);
     procedure miStartTimerClick(Sender: TObject);
     procedure tMainCookTimer(Sender: TObject);
     procedure tGridRefreshTimer(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure tiMainFormDblClick(Sender: TObject);
     procedure btnAddTimerVariantClick(Sender: TObject);
@@ -39,6 +39,7 @@ type
     procedure btnSaveClick(Sender: TObject);
     procedure sgTimerVariantsSetEditText(Sender: TObject; ACol, ARow: Integer;
       const Value: string);
+    procedure tiMainFormBalloonClick(Sender: TObject);
   private
     isExit: boolean;
     AppOptions: TAppOptions;
@@ -52,14 +53,19 @@ type
   TTimerRec = record
     startTime: TDateTime;
     stopTime: TDateTime;
+    title: string;
     messagePopup: string;
     enabled: boolean;
   end;
+
+const
+  maxShowInterval = 10000;
 
 var
   Form2: TForm2;
 
   allTimers: array of TTimerRec;
+  currentTimerShow: integer;
 
 implementation
 
@@ -203,6 +209,7 @@ begin
   SetLength(allTimers, i+1);
   allTimers[i].startTime := Now;
   allTimers[i].stopTime := dateutils.IncSecond(allTimers[i].startTime, StringToSeconds(sgTimerVariants.Cells[2, j]));
+  allTimers[i].title := sgTimerVariants.Cells[1, j];
   allTimers[i].messagePopup := sgTimerVariants.Cells[3, j];
   allTimers[i].enabled := true;
 end;
@@ -228,11 +235,6 @@ begin
 
     pmTrayMenu.Items.Insert(0, mi);
   end;
-end;
-
-procedure TForm2.SpeedButton1Click(Sender: TObject);
-begin
-  //
 end;
 
 function TForm2.StringToSeconds(s: string): integer;
@@ -290,6 +292,11 @@ begin
   end;
 end;
 
+procedure TForm2.tiMainFormBalloonClick(Sender: TObject);
+begin
+  allTimers[currentTimerShow].enabled := false;;
+end;
+
 procedure TForm2.tiMainFormDblClick(Sender: TObject);
 begin
   Show;
@@ -303,7 +310,7 @@ var
 begin
   tMainCook.Enabled := false;
 
-  minInterval := 1000 * 60 * 60;
+  minInterval := maxShowInterval * 60 * 60;
 
   n := now;
 
@@ -315,23 +322,26 @@ begin
       minInterval := -1 * MilliSecondsBetween(n, allTimers[i].stopTime) * dateutils.CompareDateTime(n, allTimers[i].stopTime);
   end;
 
-  if minInterval < 1000 then
-    minInterval := 1000;
+  if minInterval < maxShowInterval then
+    minInterval := maxShowInterval;
 
   for i := 0 to length(allTimers)-1 do begin
     if not allTimers[i].enabled then
       Continue;
 
-    if -1 * MilliSecondsBetween(n, allTimers[i].stopTime) * dateutils.CompareDateTime(n, allTimers[i].stopTime) < 1000 then begin
-      allTimers[i].enabled := false;
-      tiMainForm.BalloonTitle := 'Tea timer';
+    if -1 * MilliSecondsBetween(n, allTimers[i].stopTime) * dateutils.CompareDateTime(n, allTimers[i].stopTime) < maxShowInterval then begin
+//      allTimers[i].enabled := false;
+      tiMainForm.BalloonTitle := allTimers[i].title;
       tiMainForm.BalloonHint := allTimers[i].messagePopup;
-      tiMainForm.BalloonTimeout := 100000;
+      tiMainForm.BalloonTimeout := 1000;
+      tiMainForm.BalloonFlags := bfWarning;
+      currentTimerShow := i;
       tiMainForm.ShowBalloonHint;
+      Break;
     end;
   end;
 
-  tMainCook.Interval := minInterval div 3;
+  tMainCook.Interval := minInterval;
   tMainCook.Enabled := true;
 
 end;
